@@ -23,7 +23,19 @@
     <script>
       var socket = io();
       $('form').submit(function(){
-        socket.emit('chat message', $('#m').val());
+        if ($('#m').val().substring(0, 1) === '/') {
+          var indx = $('#m').val().indexOf(" ");
+          var command;
+          if (indx > 0) {
+            command = $('#m').val().substring(1, indx);
+          }
+          if (command === "nick") {
+            socket.emit('set nickname', $('#m').val().substring(indx + 1, $('#m').val().length));
+            $('#messages').append($('<li>').text("Nickname set to " + $('#m').val().substring(indx + 1, $('#m').val().length)));
+          }
+        } else {
+          socket.emit('chat message', $('#m').val());
+        }
         $('#m').val('');
         return false;
       });
