@@ -1,4 +1,0 @@
-werewolf
-========
-
-TA Werewolf Game
