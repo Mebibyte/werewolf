@@ -1,14 +1,10 @@
-/*var http = require('http')
-var port = process.env.PORT || 1337;
-http.createServer(function(req, res) {
-  res.writeHead(200, { 'Content-Type': 'text/plain' });
-  res.end('Hello World\n');
-}).listen(port);*/
-
 var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var port = process.env.PORT || 1337;
+
+var usernames = {};
+var numUsers = 0;
 
 app.get('/', function(req, res){
   res.sendFile('index.html', {root: __dirname});
@@ -17,6 +13,19 @@ app.get('/', function(req, res){
 io.on('connection', function(socket){
   socket.on('chat message', function(msg){
     io.emit('chat message', msg);
+  });
+  socket.on('set nickname', function(msg){
+    socket.username = msg;
+    usernames[username] = username;
+    ++numUsers;
+    socket.emit('login', {
+      numUsers: numUsers,
+      usernames: usernames
+    });
+    socket.broadcast.emit('user joined', {
+      username: username,
+      numUsers: numUsers
+    })
   });
 });
 
