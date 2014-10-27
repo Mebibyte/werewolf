@@ -4,27 +4,43 @@
     <title>Socket.IO chat</title>
     <style>
       * { margin: 0; padding: 0; box-sizing: border-box; }
-      body { font: 13px Helvetica, Arial;}
+      body { font: 13px Helvetica, Arial; }
+      form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
+      form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
+      form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
+      #messages { list-style-type: none; margin: 0; padding: 0; }
+      #messages li { padding: 5px 10px; }
+      #messages li:nth-child(odd) { background: #eee; }
     </style>
   </head>
   <body>
+    <ul id="messages"></ul>
     <form action="">
-      Enter your name: <input id="m" autocomplete="off" /><button>Send</button>
+      <input id="m" autocomplete="off" /><button>Send</button>
     </form>
-    <div id="names"></div>
     <script src="/socket.io/socket.io.js"></script>
     <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
     <script>
       var socket = io();
       $('form').submit(function(){
-        console.log("hello");
-        socket.emit('set nickname', $('#m').val());
-        console.log("hello");
+        if ($('#m').val().substring(0, 1) === '/') {
+          var indx = $('#m').val().indexOf(" ");
+          var command;
+          if (indx > 0) {
+            command = $('#m').val().substring(1, indx);
+          }
+          if (command === "nick") {
+            socket.emit('set nickname', $('#m').val().substring(indx + 1, $('#m').val().length));
+            $('#messages').append($('<li>').text("Nickname set to " + $('#m').val().substring(indx + 1, $('#m').val().length)));
+          }
+        } else {
+          socket.emit('chat message', $('#m').val());
+        }
         $('#m').val('');
+        return false;
       });
-      socket.on('set nickname', function(msg){
-        console.log(msg);
-        $('#names').html(msg);
+      socket.on('chat message', function(msg){
+        $('#messages').append($('<li>').text(msg));
       });
     </script>
   </body>
