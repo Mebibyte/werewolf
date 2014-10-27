@@ -26,6 +26,7 @@
         $('#messages').append($('<li>').text(msg));
       });
       socket.on('user joined', function(msg){
+        console.log("Joined");
         $('#users').append($('<li>').text(msg.username));
       });
     </script>
