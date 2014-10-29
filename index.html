@@ -26,7 +26,6 @@
         $('#messages').append($('<li>').text(msg));
       });
       socket.on('user joined', function(msg) {
-        console.log("Joined");
         $('#users').append($('<li>').text(msg.username));
       });
       socket.on('first join', function(msg) {
@@ -36,7 +35,6 @@
       });
       socket.on('user left', function(msg) {
         $('#users').text('');
-        console.log("user left");
         for (var key in msg.usernames) {
           $('#users').append($('<li>').text(msg.usernames[key]));
         }
