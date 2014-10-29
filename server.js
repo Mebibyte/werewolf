@@ -39,7 +39,8 @@ io.on('connection', function(socket){
       numUsers--;
 
       io.emit('user left', {
-        usernames: usernames
+        usernames: usernames,
+        numUsers: numUsers
       })
     }
   });
