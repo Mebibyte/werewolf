@@ -36,6 +36,7 @@
       });
       socket.on('user left', function(msg) {
         $('#users').text('');
+        console.log("user left");
         for (var key in msg.usernames) {
           $('#users').append($('<li>').text(msg.usernames[key]));
         }
