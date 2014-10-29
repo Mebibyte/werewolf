@@ -38,7 +38,7 @@ io.on('connection', function(socket){
       delete usernames[socket.username];
       numUsers--;
 
-      socket.broadcast.emit('user left', {
+      io.emit('user left', {
         usernames: usernames
       })
     }
