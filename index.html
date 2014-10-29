@@ -11,8 +11,7 @@
     <form action="">
       <input id="m" autocomplete="off" /><button>Send</button>
     </form>
-    <ul id="users">
-    </ul>
+    <div id="players">Players:<ul id="users"></ul></div>
     <script src="/socket.io/socket.io.js"></script>
     <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
     <script>
@@ -20,14 +19,26 @@
       $('form').submit(function(){
         socket.emit('set nickname', $('#m').val());
         $('#m').val('');
+        $('form').hide();
         return false;
       });
-      socket.on('chat message', function(msg){
+      socket.on('chat message', function(msg) {
         $('#messages').append($('<li>').text(msg));
       });
-      socket.on('user joined', function(msg){
+      socket.on('user joined', function(msg) {
         console.log("Joined");
         $('#users').append($('<li>').text(msg.username));
+      });
+      socket.on('first join', function(msg) {
+        for (var key in msg.usernames) {
+          $('#users').append($('<li>').text(msg.usernames[key]));
+        }
+      });
+      socket.on('user left', function(msg) {
+        $('#users').text('');
+        for (var key in msg.usernames) {
+          $('#users').append($('<li>').text(msg.usernames[key]));
+        }
       });
     </script>
   </body>

@@ -12,6 +12,10 @@ app.get('/', function(req, res){
 });
 
 io.on('connection', function(socket){
+  var addedUser = false;
+  socket.emit('first join', {
+    usernames: usernames
+  });
   socket.on('set nickname', function(username){
     if (host == '') {
       host = username;
@@ -19,14 +23,25 @@ io.on('connection', function(socket){
     socket.username = username;
     usernames[username] = username;
     ++numUsers;
+    addedUser = true;
     socket.emit('login', {
       numUsers: numUsers,
       usernames: usernames
     });
-    socket.emit('user joined', {
+    io.emit('user joined', {
       username: username,
       numUsers: numUsers
     })
+  });
+  socket.on('disconnect', function() {
+    if (addedUser) {
+      delete usernames[socket.username];
+      numUsers--;
+
+      socket.broadcast.emit('user left', {
+        usernames: usernames
+      })
+    }
   });
 });
 
