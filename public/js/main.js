@@ -22,6 +22,9 @@ $('form', '#vote').submit(function() {
     $('.roleSelect').each(function(i, obj) {
       $(this).attr('disabled', 'disabled');
     });
+    socket.emit('ready', true, seletedRoles);
+  } else {
+    socket.emit('ready', false, seletedRoles);
   }
   return false;
 });
@@ -35,8 +38,9 @@ socket.on('update players', function(msg) {
   numUsers = msg.numUsers;
   $('span', '#vote').text("Vote for " + (numUsers + 3) + " roles:");
   $('#users').text('');
+  console.log(msg.usernames);
   for (var key in msg.usernames) {
-    $('#users').append($('<li>').text(msg.usernames[key]));
+    $('#users').append($('<li>').text(msg.usernames[key].username + (msg.usernames[key].ready ? " \u2713" : "")));
   }
   updateRoles();
 });

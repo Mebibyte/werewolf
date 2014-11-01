@@ -33,15 +33,33 @@ io.on('connection', function(socket){
       host = username;
     }
     socket.username = username;
-    usernames[username] = username;
+    usernames[socket.username] = {
+      username: socket.username,
+      ready: false
+    };
+    for (var key in usernames) {
+      usernames[key].ready = false;
+    }
     ++numUsers;
     addedUser = true;
     updatePlayers();
   });
+
+  socket.on('ready', function(isReady, selectedRoles) {
+    usernames[socket.username] = {
+      username: socket.username,
+      ready: isReady
+    };
+    updatePlayers();
+  });
+
   socket.on('disconnect', function() {
     if (addedUser) {
       delete usernames[socket.username];
       numUsers--;
+      for (var key in usernames) {
+        usernames[key].ready = false;
+      }
       updatePlayers();
     }
   });
