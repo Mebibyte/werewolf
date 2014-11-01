@@ -1,7 +1,9 @@
-var app = require('express')();
+var express = require('express');
+var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var port = process.env.PORT || 1337;
+var path = require('path');
 
 var host = '';
 var usernames = {};
@@ -10,6 +12,7 @@ var numUsers = 0;
 app.get('/', function(req, res){
   res.sendFile('index.html', {root: __dirname});
 });
+app.use(express.static(path.join(__dirname, 'public')));
 
 io.on('connection', function(socket){
   var addedUser = false;
