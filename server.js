@@ -9,17 +9,26 @@ var host = '';
 var usernames = {};
 var numUsers = 0;
 
+// Index
 app.get('/', function(req, res){
   res.sendFile('index.html', {root: __dirname});
 });
+// Music
 app.use(express.static(path.join(__dirname, 'public')));
 
 io.on('connection', function(socket){
   var addedUser = false;
-  socket.emit('first join', {
-    usernames: usernames
-  });
-  socket.on('set nickname', function(username){
+  updatePlayers();
+  socket.on('join game', function(username){
+    // Ensures Unique Usernames
+    var newUserName = username;
+    var count = 1;
+    while (newUserName in usernames) {
+      newUserName = username + count++;
+    }
+    username = newUserName;
+
+    // First player is initially host
     if (host == '') {
       host = username;
     }
@@ -27,26 +36,23 @@ io.on('connection', function(socket){
     usernames[username] = username;
     ++numUsers;
     addedUser = true;
-    socket.emit('login', {
-      numUsers: numUsers,
-      usernames: usernames
-    });
-    io.emit('user joined', {
-      username: username,
-      numUsers: numUsers
-    })
+    updatePlayers();
   });
   socket.on('disconnect', function() {
     if (addedUser) {
       delete usernames[socket.username];
       numUsers--;
-
-      io.emit('user left', {
-        usernames: usernames,
-        numUsers: numUsers
-      })
+      updatePlayers();
     }
   });
 });
+
+function updatePlayers() {
+  io.emit('update players', {
+    numUsers: numUsers,
+    usernames: usernames,
+    host: host
+  });
+};
 
 http.listen(port, function(){});

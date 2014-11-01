@@ -2,25 +2,7 @@
 <html>
   <head>
     <title>Socket.IO chat</title>
-    <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-      body { 
-        font: 13px Helvetica, Arial;
-      }
-      #vote {
-        display: none;
-      }
-      #vote td {
-        padding: 1px;
-      }
-      #vote input {
-        margin: 1px;
-      }
-    </style>
+    <link rel="stylesheet" type="text/css" href="/css/style.css" />
   </head>
   <body>
     <div id="join">
@@ -34,72 +16,37 @@
       <form action="">
         <table>
           <tr>
-            <td><input type="checkbox" value="Werewolf1">Werewolf</td>
-            <td><input type="checkbox" value="Werewolf2">Werewolf</td>
-            <td><input type="checkbox" value="Minion">Minion</td>
-            <td><input type="checkbox" value="Tanner">Tanner</td>
+            <td><label><input type="checkbox" class="roleSelect" value="Werewolf1">Werewolf</label></td>
+            <td><label><input type="checkbox" class="roleSelect" value="Werewolf2">Werewolf</label></td>
+            <td><label><input type="checkbox" class="roleSelect" value="Minion">Minion</label></td>
+            <td><label><input type="checkbox" class="roleSelect" value="Tanner">Tanner</label></td>
           </tr>
           <tr>
-            <td><input type="checkbox" value="Villager1">Villager</td>
-            <td><input type="checkbox" value="Villager2">Villager</td>
-            <td><input type="checkbox" value="Villager3">Villager</td>
-            <td><input type="checkbox" value="Seer">Seer</td>
+            <td><label><input type="checkbox" class="roleSelect" value="Villager1">Villager</label></td>
+            <td><label><input type="checkbox" class="roleSelect" value="Villager2">Villager</label></td>
+            <td><label><input type="checkbox" class="roleSelect" value="Villager3">Villager</label></td>
+            <td><label><input type="checkbox" class="roleSelect" value="Seer">Seer</label></td>
           </tr>
           <tr>
-            <td><input type="checkbox" value="Mason1">Mason</td>
-            <td><input type="checkbox" value="Mason2">Mason</td>
-            <td><input type="checkbox" value="Robber">Robber</td>
-            <td><input type="checkbox" value="Troublemaker">Troublemaker</td>
+            <td><label><input type="checkbox" class="roleSelect" value="Mason1">Mason</label></td>
+            <td><label><input type="checkbox" class="roleSelect" value="Mason2">Mason</label></td>
+            <td><label><input type="checkbox" class="roleSelect" value="Robber">Robber</label></td>
+            <td><label><input type="checkbox" class="roleSelect" value="Troublemaker">Troublemaker</label></td>
           </tr>
           <tr>
-            <td><input type="checkbox" value="Drunk">Drunk</td>
-            <td><input type="checkbox" value="Hunter">Hunter</td>
-            <td><input type="checkbox" value="Insomniac">Insomniac</td>
-            <td><input type="checkbox" value="Doppelganger">Doppelg&#228;nger</td>
+            <td><label><input type="checkbox" class="roleSelect" value="Drunk">Drunk</label></td>
+            <td><label><input type="checkbox" class="roleSelect" value="Hunter">Hunter</label></td>
+            <td><label><input type="checkbox" class="roleSelect" value="Insomniac">Insomniac</label></td>
+            <td><label><input type="checkbox" class="roleSelect" value="Doppelganger">Doppelg&#228;nger</label></td>
           </tr>
         </table>
+        <button id="readyBtn" disabled="disabled">Ready</button>
       </form>
     </div>
     <script src="/socket.io/socket.io.js"></script>
     <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
-    <script>
-      var numUsers;
-      var socket = io();
-      $('form', '#join').submit(function(){
-        socket.emit('set nickname', $('#m').val());
-        $('#m').val('');
-        $('#join').hide();
-        $('#vote').show();
-        document.getElementById("mp3").play();
-        return false;
-      });
-      socket.on('chat message', function(msg) {
-        $('#messages').append($('<li>').text(msg));
-      });
-      socket.on('user joined', function(msg) {
-        numUsers = msg.numUsers;
-        updateNumPlayers();
-        $('#users').append($('<li>').text(msg.username));
-      });
-      socket.on('first join', function(msg) {
-        numUsers = msg.numUsers;
-        updateNumPlayers();
-        for (var key in msg.usernames) {
-          $('#users').append($('<li>').text(msg.usernames[key]));
-        }
-      });
-      socket.on('user left', function(msg) {
-        $('#users').text('');
-        numUsers = msg.numUsers;
-        updateNumPlayers();
-        for (var key in msg.usernames) {
-          $('#users').append($('<li>').text(msg.usernames[key]));
-        }
-      });
-      function updateNumPlayers() {
-        $('span', '#vote').text("Vote for " + numUsers + " role" + (numUsers > 1 ? "s" : ""));
-      }
-    </script>
+    <script src="/js/main.js"></script>
+    <!-- Music/SFX -->
     <audio src="/music/Closeeyes.mp3" id="mp3" preload="auto"></audio>
   </body>
 </html>
