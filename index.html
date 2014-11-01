@@ -70,6 +70,7 @@
         $('#m').val('');
         $('#join').hide();
         $('#vote').show();
+        //$('#mp3').play()
         return false;
       });
       socket.on('chat message', function(msg) {
@@ -99,5 +100,6 @@
         $('span', '#vote').text("Vote for " + numUsers + " role" + (numUsers > 1 ? "s" : ""));
       }
     </script>
+    <audio src="music/Closeeyes.mp3" id="mp3" preload="auto" autoplay="true"></audio>
   </body>
 </html>
