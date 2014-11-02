@@ -15,3 +15,9 @@ body {
 #vote input {
   margin: 1px;
 }
+td,th {
+  text-align: center;
+}
+#unreadyBtn {
+    display: none;
+}

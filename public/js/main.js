@@ -16,16 +16,30 @@ $('form', '#join').submit(function(){
   return false;
 });
 
-$('form', '#vote').submit(function() {
+$('#readyBtn').click(function() {
   if (selected == (numUsers + 3)) {
     document.getElementById("mp3").play();
     $('.roleSelect').each(function(i, obj) {
       $(this).attr('disabled', 'disabled');
     });
     socket.emit('ready', true, seletedRoles);
+    $('#readyBtn').hide();
+    $('#unreadyBtn').show();
   } else {
     socket.emit('ready', false, seletedRoles);
   }
+  return false;
+});
+
+$('#unreadyBtn').click(function() {
+  $('#readyBtn').show();
+  $('#unreadyBtn').hide();
+  $('.roleSelect').each(function(i, obj) {
+    if (obj.checked) {
+      $(this).removeAttr('disabled');
+    }
+  });
+  socket.emit('ready', false, seletedRoles);
   return false;
 });
 
