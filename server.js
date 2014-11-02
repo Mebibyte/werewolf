@@ -27,10 +27,14 @@ io.on('connection', function(socket){
       newUserName = username + count++;
     }
     username = newUserName;
+    if (count > 1) {
+      socket.emit("name change", username);
+    }
 
     // First player is initially host
     if (host == '') {
       host = username;
+      socket.emit("become host");
     }
     socket.username = username;
     usernames[socket.username] = {

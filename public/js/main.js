@@ -1,10 +1,9 @@
 var socket = io();
 
 var numUsers;
-var isHost = false;
 var myName = '';
 var selected = 0;
-var seletedRoles={};
+var seletedRoles = {};
 
 $('form', '#join').submit(function(){
   myName = $('#m').val();
@@ -18,7 +17,6 @@ $('form', '#join').submit(function(){
 
 $('#readyBtn').click(function() {
   if (selected == (numUsers + 3)) {
-    document.getElementById("mp3").play();
     $('.roleSelect').each(function(i, obj) {
       $(this).attr('disabled', 'disabled');
     });
@@ -43,18 +41,38 @@ $('#unreadyBtn').click(function() {
   return false;
 });
 
+$('#startGame').click(function() {
+  document.getElementById("mp3").play();
+});
+
 $('input[class="roleSelect"]').change(function() {
   $(this).context.checked ? selected++ : selected--;
   updateRoles();
+});
+
+socket.on('name change', function(username) {
+  myName = username;
 });
 
 socket.on('update players', function(msg) {
   numUsers = msg.numUsers;
   $('span', '#vote').text("Vote for " + (numUsers + 3) + " roles:");
   $('#users').text('');
-  console.log(msg.usernames);
+  var allReady = true;
+  var isHost = msg.host == myName;
   for (var key in msg.usernames) {
-    $('#users').append($('<li>').text(msg.usernames[key].username + (msg.usernames[key].ready ? " \u2713" : "")));
+    if (!msg.usernames[key].ready) {
+      allReady = false;
+    }
+    $('#users').append($('<li>').text(msg.usernames[key].username + (msg.usernames[key].ready ? " \u2713" : "") + (key == msg.host ? " \u2654" : "")));
+  }
+  if (isHost) {
+    $("#startGame").show();
+    if (allReady) {
+      $("#startGame").removeAttr('disabled');
+    } else {
+      $('#startGame').attr('disabled', 'disabled');
+    }
   }
   updateRoles();
 });
@@ -64,9 +82,17 @@ function updateRoles() {
     $('#readyBtn').removeAttr('disabled');
   } else {
     $('#readyBtn').attr('disabled', 'disabled');
+    $('#readyBtn').show();
+    $('#unreadyBtn').hide();
   }
   $('.roleSelect').each(function(i, obj) {
-    if (selected >= (numUsers + 3)) {
+    if (selected > (numUsers + 3)) {
+      if (!obj.checked) {
+        $(this).attr('disabled', 'disabled');
+      } else {
+        $(this).removeAttr('disabled');
+      }
+    } else if (selected == (numUsers + 3)) {
       if (!obj.checked) {
         $(this).attr('disabled', 'disabled');
       }
