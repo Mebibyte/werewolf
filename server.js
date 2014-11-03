@@ -83,10 +83,7 @@ io.on('connection', function(socket){
       }
       var rolesArray = Object.keys(same);
       if (rolesArray.length > 1) {
-        console.log(rolesArray);
-        var newNum = Math.random() * rolesArray.length;
-        console.log(newNum);
-        max = rolesArray[Math.floor(newNum)];
+        max = rolesArray[Math.floor(Math.random() * rolesArray.length)];
       }
       rolesInGame[i] = max;
       roles[max] = 0;
@@ -121,8 +118,10 @@ io.on('connection', function(socket){
 });
 
 function updatePlayers() {
-  if (usernames == undefined) {
-    usernames = {};
+  for (var key in usernames) {
+    if (usernames[key].username == undefined) {
+      delete usernames[key];
+    }
   }
   io.emit('update players', {
     numUsers: numUsers,
