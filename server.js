@@ -121,6 +121,9 @@ io.on('connection', function(socket){
 });
 
 function updatePlayers() {
+  if (usernames == undefined) {
+    usernames = {};
+  }
   io.emit('update players', {
     numUsers: numUsers,
     usernames: usernames,
