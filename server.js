@@ -73,6 +73,15 @@ io.on('connection', function(socket){
         }
       }
       delete usernames[socket.username];
+      if (host == socket.username) {
+        var keyArray = Object.keys(usernames);
+        var len = keyArray.length;
+        if (len == 0) {
+          host = '';
+        } else {
+          host = usernames[keyArray[Math.floor(Math.random() * len)]].username;
+        }
+      }
       numUsers--;
       updatePlayers();
     }
