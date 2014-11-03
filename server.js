@@ -8,6 +8,10 @@ var path = require('path');
 var host = '';
 var usernames = {};
 var numUsers = 0;
+var roles = {'Werewolf1': 0, 'Werewolf2': 0, 'Minion': 0, 'Tanner': 0,
+  'Villager1': 0, 'Villager2': 0, 'Villager3': 0, 'Seer': 0, 'Mason1': 0,
+  'Mason2': 0, 'Robber': 0, 'Troublemaker': 0, 'Drunk': 0, 'Hunter': 0,
+  'Insomniac': 0, 'Doppleganger': 0}
 
 // Index
 app.get('/', function(req, res){
@@ -41,9 +45,6 @@ io.on('connection', function(socket){
       username: socket.username,
       ready: false
     };
-    for (var key in usernames) {
-      usernames[key].ready = false;
-    }
     ++numUsers;
     addedUser = true;
     updatePlayers();
@@ -54,16 +55,25 @@ io.on('connection', function(socket){
       username: socket.username,
       ready: isReady
     };
+    for (var key in selectedRoles) {
+      roles[key] = roles[key] + (isReady ? 1 : -1);
+      if (roles[key] < 0) {
+        roles[key] = 0;
+      }
+    }
+    console.log(roles);
     updatePlayers();
   });
 
   socket.on('disconnect', function() {
     if (addedUser) {
+      if (usernames[socket.username].ready) {
+        for (var key in roles) {
+          roles[key] = 0;
+        }
+      }
       delete usernames[socket.username];
       numUsers--;
-      for (var key in usernames) {
-        usernames[key].ready = false;
-      }
       updatePlayers();
     }
   });

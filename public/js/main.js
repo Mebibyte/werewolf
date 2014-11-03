@@ -3,7 +3,8 @@ var socket = io();
 var numUsers;
 var myName = '';
 var selected = 0;
-var seletedRoles = {};
+var selectedRoles = {};
+var ready = false;
 
 $('form', '#join').submit(function(){
   myName = $('#m').val();
@@ -20,16 +21,19 @@ $('#readyBtn').click(function() {
     $('.roleSelect').each(function(i, obj) {
       $(this).attr('disabled', 'disabled');
     });
-    socket.emit('ready', true, seletedRoles);
+    ready = true;
+    socket.emit('ready', ready, selectedRoles);
     $('#readyBtn').hide();
     $('#unreadyBtn').show();
   } else {
-    socket.emit('ready', false, seletedRoles);
+    ready = false;
+    socket.emit('ready', ready, selectedRoles);
   }
   return false;
 });
 
 $('#unreadyBtn').click(function() {
+  ready = false;
   $('#readyBtn').show();
   $('#unreadyBtn').hide();
   $('.roleSelect').each(function(i, obj) {
@@ -37,7 +41,7 @@ $('#unreadyBtn').click(function() {
       $(this).removeAttr('disabled');
     }
   });
-  socket.emit('ready', false, seletedRoles);
+  socket.emit('ready', ready, selectedRoles);
   return false;
 });
 
@@ -46,7 +50,13 @@ $('#startGame').click(function() {
 });
 
 $('input[class="roleSelect"]').change(function() {
-  $(this).context.checked ? selected++ : selected--;
+  if ($(this).context.checked) {
+    selected++;
+    selectedRoles[$(this).val()] = true;
+  } else {
+    selected--;
+    delete selectedRoles[$(this).val()];
+  }
   updateRoles();
 });
 
@@ -57,9 +67,13 @@ socket.on('name change', function(username) {
 socket.on('update players', function(msg) {
   numUsers = msg.numUsers;
   $('span', '#vote').text("Vote for " + (numUsers + 3) + " roles:");
-  $('#users').text('');
   var allReady = true;
   var isHost = msg.host == myName;
+  $('#users').text('');
+  if (selected != (numUsers + 3) && ready) {
+    ready = false;
+    socket.emit('ready', ready, selectedRoles);
+  }
   for (var key in msg.usernames) {
     if (!msg.usernames[key].ready) {
       allReady = false;
