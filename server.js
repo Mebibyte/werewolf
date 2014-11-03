@@ -12,6 +12,7 @@ var roles = {'Werewolf1': 0, 'Werewolf2': 0, 'Minion': 0, 'Tanner': 0,
   'Villager1': 0, 'Villager2': 0, 'Villager3': 0, 'Seer': 0, 'Mason1': 0,
   'Mason2': 0, 'Robber': 0, 'Troublemaker': 0, 'Drunk': 0, 'Hunter': 0,
   'Insomniac': 0, 'Doppleganger': 0}
+var rolesInGame = [];
 
 // Index
 app.get('/', function(req, res){
@@ -61,8 +62,39 @@ io.on('connection', function(socket){
         roles[key] = 0;
       }
     }
-    console.log(roles);
     updatePlayers();
+  });
+
+  socket.on('start game', function() {
+    io.emit('hide vote');
+    for (var i = 0; i < numUsers + 3; i++) {
+      var max = '';
+      var same = {};
+      for (var key in roles) {
+        if (max == '') {
+          max = key;
+        } else if (roles[key] > roles[max]) {
+          max = key;
+          same = {};
+        } else if (roles[key] == roles[max] && key != max) {
+          same[key] = true;
+          same[max] = true;
+        }
+      }
+      var rolesArray = Object.keys(same);
+      if (rolesArray.length > 1) {
+        console.log(rolesArray);
+        var newNum = Math.random() * rolesArray.length;
+        console.log(newNum);
+        max = rolesArray[Math.floor(newNum)];
+      }
+      rolesInGame[i] = max;
+      roles[max] = 0;
+    }
+    for (var key in roles) {
+      roles[key] = 0;
+    }
+    io.emit('roles in game', rolesInGame);
   });
 
   socket.on('disconnect', function() {

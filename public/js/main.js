@@ -47,6 +47,7 @@ $('#unreadyBtn').click(function() {
 
 $('#startGame').click(function() {
   document.getElementById("mp3").play();
+  socket.emit('start game');
 });
 
 $('input[class="roleSelect"]').change(function() {
@@ -87,8 +88,21 @@ socket.on('update players', function(msg) {
     } else {
       $('#startGame').attr('disabled', 'disabled');
     }
+  } else {
+    $("#startGame").hide();
   }
   updateRoles();
+});
+
+socket.on('hide vote', function() {
+  $('#vote').hide();
+});
+
+socket.on('roles in game', function(roles) {
+  $('#rolesInGame').show();
+  for (var idx in roles) {
+    $('#roles').append($('<li>').text(roles[idx]));
+  }
 });
 
 function updateRoles() {

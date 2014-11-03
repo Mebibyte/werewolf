@@ -24,3 +24,6 @@ td,th {
 #startGame {
     display: none;
 }
+#rolesInGame {
+  display: none;
+}
