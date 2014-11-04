@@ -129,3 +129,7 @@ function updateRoles() {
     }
   });
 }
+
+socket.on('game in progress', function() {
+  $('#wrapper').hide();
+});

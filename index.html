@@ -1,10 +1,11 @@
 <!doctype html>
 <html>
   <head>
-    <title>Socket.IO chat</title>
+    <title>Werewolf for CS1331 TA's Only!</title>
     <link rel="stylesheet" type="text/css" href="/css/style.css" />
   </head>
   <body>
+    <div id="wrapper">
     <div id="join">
       <form action="">
         <input id="m" autocomplete="off" /><button>Send</button>
@@ -141,6 +142,7 @@
         <button id="unreadyBtn">Unready</button>
       </form>
       <button id="startGame" disabled="disabled">Start Game</button>
+    </div>
     </div>
     <script src="/socket.io/socket.io.js"></script>
     <script src="http://code.jquery.com/jquery-1.11.1.js"></script>

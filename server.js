@@ -13,6 +13,7 @@ var roles = {'Werewolf1': 0, 'Werewolf2': 0, 'Minion': 0, 'Tanner': 0,
   'Mason2': 0, 'Robber': 0, 'Troublemaker': 0, 'Drunk': 0, 'Hunter': 0,
   'Insomniac': 0, 'Doppleganger': 0}
 var rolesInGame = [];
+var gameInProgress = false;
 
 // Index
 app.get('/', function(req, res){
@@ -24,6 +25,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 io.on('connection', function(socket){
   var addedUser = false;
   updatePlayers();
+  if (gameInProgress) {
+    socket.emit('game in progress');
+  }
   socket.on('join game', function(username){
     // Ensures Unique Usernames
     var newUserName = username;
@@ -66,6 +70,7 @@ io.on('connection', function(socket){
   });
 
   socket.on('start game', function() {
+    gameInProgress = true;
     io.emit('hide vote');
     for (var i = 0; i < numUsers + 3; i++) {
       var max = '';
@@ -92,6 +97,7 @@ io.on('connection', function(socket){
       roles[key] = 0;
     }
     io.emit('roles in game', rolesInGame);
+    gameInProgress = false;
   });
 
   socket.on('disconnect', function() {
