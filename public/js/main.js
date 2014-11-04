@@ -105,6 +105,10 @@ socket.on('roles in game', function(roles) {
   }
 });
 
+socket.on('player roles', function(playerRoles) {
+  $('#myRole').text("Your role: " + playerRoles[myName]);
+});
+
 function updateRoles() {
   if (selected == (numUsers + 3)) {
     $('#readyBtn').removeAttr('disabled');

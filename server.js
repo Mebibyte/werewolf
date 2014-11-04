@@ -14,6 +14,7 @@ var roles = {'Werewolf1': 0, 'Werewolf2': 0, 'Minion': 0, 'Tanner': 0,
   'Insomniac': 0, 'Doppleganger': 0}
 var rolesInGame = [];
 var gameInProgress = false;
+var playerRoles = {};
 
 // Index
 app.get('/', function(req, res){
@@ -97,6 +98,13 @@ io.on('connection', function(socket){
       roles[key] = 0;
     }
     io.emit('roles in game', rolesInGame);
+    rolesGameArray = rolesInGame;
+    for (var user in usernames) {
+      var role = rolesGameArray[Math.floor(Math.random() * rolesGameArray.length)];
+      playerRoles[user] = role;
+      delete rolesGameArray[role];
+    }
+    io.emit('player roles', playerRoles);
     gameInProgress = false;
   });
 
