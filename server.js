@@ -100,9 +100,9 @@ io.on('connection', function(socket){
     io.emit('roles in game', rolesInGame);
     rolesGameArray = rolesInGame;
     for (var user in usernames) {
-      var role = rolesGameArray[Math.floor(Math.random() * rolesGameArray.length)];
-      playerRoles[user] = role;
-      delete rolesGameArray[role];
+      var roleNum = Math.floor(Math.random() * rolesGameArray.length);
+      playerRoles[user] = rolesGameArray[roleNum];
+      delete rolesGameArray[roleNum];
     }
     io.emit('player roles', playerRoles);
     gameInProgress = false;
